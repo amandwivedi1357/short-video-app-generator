@@ -31,7 +31,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/dashboard/create-new/page.jsx"  ],
+, "app/dashboard/create-new/page.jsx", "components/ui/DarkModeToggle.jsx"  ],
   "exclude": [
     "node_modules"
   ]
