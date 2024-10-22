@@ -4,8 +4,8 @@ import { UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import React, { useContext, useState, useEffect } from 'react'
 import {Button} from "@/components/ui/button"
-import DarkModeToggle from '@/components/ui/DarkModeToggle'
 import {UserDetailContext} from "../../_context/UserDetailContext"
+import { DarkModeToggle } from '@/components/ui/DarkModeToggle'
 
 const Header = () => {
   const {userDetails} = useContext(UserDetailContext)
