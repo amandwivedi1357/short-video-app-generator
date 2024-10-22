@@ -27,7 +27,7 @@ const Header = () => {
             height={50}
             className='rounded-full'
             />
-            <h2 className='font-bold text-xl'>ClipVerse</h2>
+            <h2 className='font-bold hidden md:block text-xl'>ClipVerse</h2>
         </div>
         <div className='flex gap-3 items-center'>
           <h2>Credits: {userDetails?.credits || 0}</h2>

@@ -8,6 +8,7 @@ import { eq } from 'drizzle-orm'
 import { VideoData } from '@/config/schema'
 import VideoList from "./_components/VideoList"
 import { useUser } from '@clerk/nextjs'
+import { PlusCircle } from 'lucide-react'
 
 const Page = () => {
   const [videoList, setVideoList] = useState([]);
@@ -42,8 +43,8 @@ const Page = () => {
       <div className='flex items-center justify-between'>
         <h2 className='font-bold text-2xl text-purple-500'>Dashboard</h2>
         <Link href={'/dashboard/create-new'}>
-          <Button className='bg-purple-500'>
-            Create New Short Video
+          <Button className='flex gap-2 bg-purple-500'>
+            Create New <PlusCircle />  
           </Button>
         </Link>
       </div>
