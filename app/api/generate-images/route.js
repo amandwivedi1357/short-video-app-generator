@@ -1,6 +1,7 @@
 import { storage } from "@/config/FirebaseConfig";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { NextResponse } from "next/server";
+import axios from 'axios';
 
 export async function POST(req) {
     try {
@@ -31,33 +32,26 @@ export async function POST(req) {
             return NextResponse.json({ error: "No images found" }, { status: 404 });
         }
 
-        // Return the first image's URL
         const imageUrl = data.photos[0].src.original;
-        const base64Image = "data:image/png;base64,"+await convertImage(imageUrl);
-        const fileName = 'clipVerse-Files/'+Date.now()+"png";
-
-        const storageRef  = ref(storage,fileName);
-        await uploadString(storageRef,base64Image,'data_url');
-
-        const downloadURL = await getDownloadURL(storageRef)
-        console.log(downloadURL)
-        return NextResponse.json({ result: downloadURL });
-        //return NextResponse.json({ result: imageUrl });
         
+        // Validate the image by trying to fetch it
+        const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+        if (imageResponse.status !== 200 || imageResponse.data.byteLength < 1000) {
+            throw new Error('Invalid or corrupted image received from Pexels');
+        }
+
+        const base64Image = Buffer.from(imageResponse.data).toString('base64');
+        const fileName = `clipVerse-Files/${Date.now()}.png`;
+
+        const storageRef = ref(storage, fileName);
+        await uploadString(storageRef, `data:image/png;base64,${base64Image}`, 'data_url');
+
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log("Image uploaded, download URL:", downloadURL);
+
+        return NextResponse.json({ result: downloadURL });
     } catch (error) {
-        console.error("Error in fetching images from Pexels:", error);
+        console.error("Error in generating/uploading image:", error);
         return NextResponse.json({ error: error.message || "An unexpected error occurred" }, { status: 500 });
     }
-}
-
-
-
-const convertImage = async(imageUrl) => {
-  try {
-    const resp = await axios.get(imageUrl,{responseType:'arraybuffer'})
-    const base64Image = Buffer.from(resp.data).toString('base64')
-    return base64Image
-  } catch (error) {
-    console.log(error)
-  }
 }

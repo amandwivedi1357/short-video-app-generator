@@ -8,10 +8,13 @@ import { toast } from "@/hooks/use-toast"
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import { VideoDataContext } from '@/app/_context/VideoDataContext'
-import { db } from '@/config/db'
+// import { db } from '@/config/db'
+
 import { useUser } from '@clerk/nextjs'
 import { VideoData } from '@/config/schema'
 import PlayerDialogue from "../_components/PlayerDialogue"
+import { db } from '@/config/db'
+import { useRouter } from 'next/navigation'
 const Page = () => {
   const [loading, setLoading] = useState(false);
   const [audioFileUrl, setAudioFileUrl] = useState();
@@ -20,8 +23,8 @@ const Page = () => {
   const [videoScript, setVideoScript] = useState();
   const {videoData,setVideoData}  = useContext(VideoDataContext)
   const {user}  = useUser()
-  const [playVideo, setPlayVideo] = useState(true);
-  const [videoId, setvideoId] = useState(1);
+  const [playVideo, setPlayVideo] = useState(false);
+  const [videoId, setVideoId] = useState(null);
   const [formData, setFormData] = useState({
     duration: '',
     topic: '',
@@ -205,60 +208,45 @@ const Page = () => {
     let images = [];
     try {
       for (const element of videoScriptData) {
-        // Make an API call to the Pexels API (through your backend)
-        const res = await axios.post('/api/generate-images', {
-          prompt: element?.imagePrompt // Send the prompt to the backend
-        });
+        try {
+          const res = await axios.post('/api/generate-images', {
+            prompt: element?.imagePrompt
+          });
 
-        // Extract the image URL from the response
-        const imageUrl = res.data.result;
-        console.log(imageUrl);
+          const imageUrl = res.data.result;
+          console.log("Generated image URL:", imageUrl);
 
+          // Validate the image URL
+          if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.startsWith('http')) {
+            throw new Error('Invalid image URL received');
+          }
 
-        // Push the image URL to the list
-        images.push(imageUrl);
+          images.push(imageUrl);
+        } catch (error) {
+          console.error("Error generating individual image:", error);
+          // Instead of breaking the loop, we'll add a placeholder or skip this image
+          images.push(null); // or a placeholder URL
+        }
       }
 
-      console.log(images);
- setVideoData(prev=>({
+      console.log("All generated images:", images);
+      setVideoData(prev => ({
         ...prev,
-        'imageList':images
-      }))
-      // Update the image list state
-      setImageList(images);
+        'imageList': images.filter(Boolean) // Remove any null values
+      }));
+      setImageList(images.filter(Boolean));
 
-      // Show success toast
       toast({
         title: "Success",
-        description: "Images fetched successfully from Pexels.",
+        description: "Images generated successfully.",
       });
-
     } catch (error) {
-      console.error("Error fetching images:", error);
-
-      if (error.response) {
-        // Server responded with a status code out of the 2xx range
-        console.error(error.response.data);
-        console.error(error.response.status);
-        console.error(error.response.headers);
-      } else if (error.request) {
-        // Request was made, but no response received
-        console.error(error.request);
-      } else {
-        // Something else triggered the error
-        console.error('Error', error.message);
-      }
-
-      // Show error toast
+      console.error("Error in image generation process:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch images. Please try again.",
+        description: "Failed to generate all images. Some may be missing.",
       });
-
     } finally {
-      // console.log(images,videoScript,audioFileUrl,captions)
-      setImageList(images)
-      // Set loading to false after the operation is completed
       setLoading(false);
     }
   }
@@ -273,17 +261,32 @@ useEffect(() => {
 const saveVideoData = async(videoData)=>{
 setLoading(true)
 
-const result  = await db.insert(VideoData).values({
-  script:videoData?.script,
-  audioFileUrl:videoData?.audioFileUrl,
-  captions:videoData?.captions,
-  imageList:videoData?.imageList,
-  createdBy:user?.primaryEmailAddress.emailAddress
-}).returning({id:VideoData?.id})
-console.log(result)
-setvideoId(result[0].id)
-setPlayVideo(true)
-setLoading(false)
+try {
+  const result = await db.insert(VideoData).values({
+    script: videoData?.script,
+    audioFileUrl: videoData?.audioFileUrl,
+    captions: videoData?.captions,
+    imageList: videoData?.imageList,
+    createdBy: user?.primaryEmailAddress.emailAddress
+  }).returning({ id: VideoData?.id })
+
+  console.log(result)
+  setVideoId(result[0].id)
+  setPlayVideo(true)  // Only set to true after successful video creation
+  
+  toast({
+    title: "Success",
+    description: "Video created successfully!",
+  });
+} catch (error) {
+  console.error("Error saving video data:", error);
+  toast({
+    title: "Error",
+    description: "Failed to save video data. Please try again.",
+  });
+} finally {
+  setLoading(false)
+}
 }
   
   return (
@@ -302,7 +305,7 @@ setLoading(false)
         </Button>
       </div>
       <CustomLoading loading={loading}/>
-      <PlayerDialogue playVideo={playVideo} videoId={videoId}/>
+      {videoId && <PlayerDialogue playVideo={playVideo} videoId={videoId}/>}
     </div>
   )
 }
