@@ -1,4 +1,3 @@
-"use client"
 import React, { useState } from 'react'
 import {
     Select,
@@ -8,14 +7,10 @@ import {
     SelectValue,
   } from "@/components/ui/select"
   import { Textarea } from "@/components/ui/textarea"
-
-const SelectTopic = ({onUserSelect}) => {
-    const options = [
-        'Custom Prompt','Random ai Stories','Scary Stories','Bed Time Story','Historical Facts','Motivational Stories'
-    ]
-    const [selectedOption, setSelectedOption] = useState('');
+const SelectDuration = ({onUserSelect}) => {
+    const [selectedOption, setSelectedOption] = useState();
   return (
-    <div>
+    <div className='mt-7'>
         <h2 className='font-bold text-2xl text-purple-500'>
             Content
         </h2>
@@ -25,18 +20,18 @@ const SelectTopic = ({onUserSelect}) => {
         <Select onValueChange={(value)=>{
             
             setSelectedOption(value)
-            value!='Custom Prompt' && onUserSelect('topic',value)
+            value!='Custom Prompt' && onUserSelect('duration',value)
             }}>
   <SelectTrigger className="className='w-full mt-2 p-6 text-lg'">
-    <SelectValue placeholder="Content Type" />
+    <SelectValue placeholder="Select Duration of the video" />
   </SelectTrigger>
   <SelectContent>
-    {
-        options.map((item,idx)=>(
+  
             
-            <SelectItem  key={idx} value={item}>{item}</SelectItem>
-        ))
-    }
+            <SelectItem   value='15 Seconds'>15 Seconds</SelectItem>
+            <SelectItem   value='30 Seconds'>30 Seconds</SelectItem>
+            <SelectItem   value='60 Seconds'>60 Seconds</SelectItem>
+     
    
   </SelectContent>
 </Select>
@@ -53,4 +48,4 @@ const SelectTopic = ({onUserSelect}) => {
   )
 }
 
-export default SelectTopic
+export default SelectDuration
