@@ -21,7 +21,7 @@ const VideoList = ({videoList}) => {
                 <div
                 key={video.id}
                 onClick={() => handleVideoClick(video.id)}
-                className='hover:scale-105 transition-all duration-300'>
+                className='hover:scale-105 transition-all duration-300 dark:shadow-lg rounded-lg dark:shadow-purple-700 '>
                     <Thumbnail
                         component={RemotionVideo}
                         compositionWidth = {200}
