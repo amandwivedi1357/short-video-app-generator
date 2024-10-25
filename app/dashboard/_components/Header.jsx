@@ -6,8 +6,10 @@ import React, { useContext, useState, useEffect } from 'react'
 import {Button} from "@/components/ui/button"
 import {UserDetailContext} from "../../_context/UserDetailContext"
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle'
+import { useRouter } from 'next/navigation'
 
 const Header = () => {
+  const router = useRouter()
   const {userDetails} = useContext(UserDetailContext)
   const [isClient, setIsClient] = useState(false)
 
@@ -19,7 +21,7 @@ const Header = () => {
 
   return (
     <div className='p-3 px-5 flex items-center justify-between shadow-md'>
-        <div className='flex gap-3 items-center'>
+        <div className='flex gap-3 items-center cursor-pointer'>
             <Image
             src={'/logo.png'}
             alt='logo'
@@ -27,13 +29,10 @@ const Header = () => {
             height={50}
             className='rounded-full'
             />
-            <h2 className='font-bold hidden md:block text-xl'>ClipVerse</h2>
+            <h2 onClick={()=>router.push('/')} className='font-bold hidden md:block text-xl'>ClipVerse</h2>
         </div>
         <div className='flex gap-3 items-center'>
-          <h2>Credits: {userDetails?.credits || 0}</h2>
-            <Button className='bg-purple-500 dark:text-white font-semibold dark:hover:text-black'>
-                Dashboard
-            </Button>
+          <h2 className='font-bold'>Credits: {userDetails?.credits || 0}</h2>
             <DarkModeToggle/>
             <UserButton/>
         </div>

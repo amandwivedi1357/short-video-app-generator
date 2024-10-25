@@ -16,7 +16,8 @@ const SelectTopic = ({onUserSelect}) => {
     const [selectedOption, setSelectedOption] = useState('');
   return (
     <div>
-        <h2 className='font-bold text-2xl text-purple-500'>
+                <h2 className='font-bold text-xl text-purple-600 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'>
+
             Content
         </h2>
         <p className='text-gray-500'>What is the topic of your video</p>

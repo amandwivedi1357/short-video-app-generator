@@ -11,8 +11,8 @@ const SelectDuration = ({onUserSelect}) => {
     const [selectedOption, setSelectedOption] = useState();
   return (
     <div className='mt-7'>
-        <h2 className='font-bold text-2xl text-purple-500'>
-            Content
+        <h2 className='font-bold text-xl text-purple-600 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 '>
+            Duration
         </h2>
         <p className='text-gray-500'>What is the topic of your video</p>
 

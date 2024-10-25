@@ -36,6 +36,7 @@
     "embla-carousel-react": "^8.3.0",
     "firebase": "^10.14.1",
     "formidable": "^3.5.1",
+    "framer-motion": "^11.11.9",
     "fs-extra": "^11.2.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.453.0",

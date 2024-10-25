@@ -36,12 +36,24 @@ const Sidenav = () => {
   return (
     <div className='w-64 h-screen shadow-md p-5'>
        <div className='grid gap-3'>
-        {MenuOptions.map((item,idx)=>(
-            <Link href={item.path}>
-            <div key={idx} className={`flex rounded-md cursor-pointer items-center p-3 gap-3 hover:bg-purple-500 hover:text-white ${path==item.path && 'bg-purple-500 text-white'}`}>
-                <item.icon/>
-                <h2>{item.name}</h2>
-            </div>
+        {MenuOptions.map((item, idx) => (
+            <Link href={item.path} key={idx}>
+                <div className={`flex rounded-md cursor-pointer items-center p-3 gap-3 font-bold transition-all duration-300 ${
+                    path === item.path
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg transform scale-105'
+                        : 'hover:bg-purple-100 dark:hover:bg-purple-900 text-gray-700 dark:text-gray-300'
+                }`}>
+                    <item.icon className={`${
+                        path === item.path
+                            ? 'text-white'
+                            : 'text-purple-600 dark:text-pink-400'
+                    }`}/>
+                    <h2 className={`${
+                        path === item.path
+                            ? 'text-white'
+                            : 'bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'
+                    }`}>{item.name}</h2>
+                </div>
             </Link>
         ))}
        </div>

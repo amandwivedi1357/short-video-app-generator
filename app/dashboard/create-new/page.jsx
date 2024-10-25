@@ -291,22 +291,23 @@ try {
   
   return (
     <div className='md:px-20'>
-      <h2 className='font-bold text-4xl text-purple-500 text-center'>
-        Create New
-      </h2>
-      <div className='mt-10 shadow-md dark:shadow-purple-500 dark:shadow-md rounded-md p-10'>
-        <SelectTopic onUserSelect={onHandleInputChange}/>
-        <SelectStyle onUserSelect={onHandleInputChange}/>
-        <SelectDuration onUserSelect={onHandleInputChange}/>
-        <Button
-          onClick={onCreateClickHandler}
-          className='bg-purple-500 w-full mt-4 dark:text-white font-semibold dark:hover:text-black'>
-          Create Video
-        </Button>
-      </div>
-      <CustomLoading loading={loading}/>
-      {videoId && <PlayerDialogue playVideo={playVideo} videoId={videoId}/>}
-    </div>
+  <h2 className='font-bold text-4xl text-purple-600 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 text-center'>
+    Create New
+  </h2>
+  <div className='mt-10 border-2 border-purple-600 shadow-lg rounded-md p-10'>
+    <SelectTopic onUserSelect={onHandleInputChange} />
+    <SelectStyle onUserSelect={onHandleInputChange} />
+    <SelectDuration onUserSelect={onHandleInputChange} />
+    <Button
+      onClick={onCreateClickHandler}
+      className=" w-full mt-3  text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600  hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+      Create Video
+    </Button>
+  </div>
+  <CustomLoading loading={loading} />
+  {videoId && <PlayerDialogue playVideo={playVideo} videoId={videoId} />}
+</div>
+
   )
 }
 
