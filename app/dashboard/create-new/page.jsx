@@ -15,6 +15,7 @@ import { VideoData } from '@/config/schema'
 import PlayerDialogue from "../_components/PlayerDialogue"
 import { db } from '@/config/db'
 import { useRouter } from 'next/navigation'
+import ReactConfetti from 'react-confetti'
 const Page = () => {
   const [loading, setLoading] = useState(false);
   const [audioFileUrl, setAudioFileUrl] = useState();
@@ -30,7 +31,7 @@ const Page = () => {
     topic: '',
     imageStyle: ''
   });
-
+  const [showConfetti, setShowConfetti] = useState(false);
   // const videoSCRIPT = [
   // {
   //   "imagePrompt": "A bustling medieval marketplace in the heart of a European city. People are buying and selling goods, children are playing, and merchants are hawking their wares. It is a vibrant scene full of life and activity. Realistic style, high detail.",
@@ -69,6 +70,7 @@ const Page = () => {
 
   const onCreateClickHandler = () => {
     getVideoScript()
+    setLoading(true)
     //generateImages()
   }
 
@@ -78,7 +80,7 @@ const Page = () => {
   */
 
   const getVideoScript = async () => {
-    setLoading(true)
+    
     const prompt = `Write a script to generate ${formData.duration} video on topic: ${formData.topic} along with AI image prompt in ${formData.imageStyle} format for each scene and give me result in JSON format with imagePrompt and ContentText as fields. No Plain text.`;
     try {
       const res = await axios.post('/api/get-video-script', { prompt: prompt });
@@ -108,16 +110,13 @@ const Page = () => {
     } catch (error) {
       console.error("Error getting video script:", error);
       // You might want to set an error state here to display to the user
-    } finally {
-      
-      setLoading(false)
-    }
+    } 
   }
 
 
   // Audio File generation
   const generateAudioFile = async (videoScriptData) => {
-    setLoading(true);
+    
     let fullScript = '';
   
     try {
@@ -152,16 +151,13 @@ const Page = () => {
       }))
     } catch (error) {
       console.error('Error generating audio:', error);
-    } finally {
-      setLoading(false);
-      
-    }
+    } 
    };
 
 
   //  Audio Caption Generation
   const generateAudioCaption = async (fileUrl,videoScriptData) => {
-    setLoading(true);
+    
     try {
       console.log('Generating captions for:', fileUrl);
       const response = await axios.post('/api/generate-captions', {
@@ -197,14 +193,14 @@ const Page = () => {
         description: "Failed to generate captions: " + errorMessage,
       });
     } finally {
-      setLoading(false);
+     
      console.log(captions)
     }
   };
 
 // Images Generation
   const generateImages = async (videoScriptData) => {
-    setLoading(true);
+    
     let images = [];
     try {
       for (const element of videoScriptData) {
@@ -246,9 +242,7 @@ const Page = () => {
         title: "Error",
         description: "Failed to generate all images. Some may be missing.",
       });
-    } finally {
-      setLoading(false);
-    }
+    } 
   }
 useEffect(() => {
   console.log(videoData)
@@ -259,7 +253,7 @@ useEffect(() => {
 }, [videoData]);
 
 const saveVideoData = async(videoData)=>{
-setLoading(true)
+
 
 try {
   const result = await db.insert(VideoData).values({
@@ -286,11 +280,25 @@ try {
   });
 } finally {
   setLoading(false)
+  handleStepClick()
 }
 }
-  
+
+
+const handleStepClick = () => {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 5000); 
+};
   return (
     <div className='md:px-20'>
+      {showConfetti && (
+        <ReactConfetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={200}
+        />
+      )}
   <h2 className='font-bold text-4xl text-purple-600 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 text-center'>
     Create New
   </h2>

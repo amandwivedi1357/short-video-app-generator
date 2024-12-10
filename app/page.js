@@ -1,9 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useCallback } from 'react'
 import { Sun, Moon, ArrowRight, Video, Wand2, Layout, Check } from 'lucide-react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  FileText,
+  Mic,
+  MessageSquare,
+  Image as ImageIcon,
+  
+} from "lucide-react";
+import ReactConfetti from 'react-confetti';
 
 export default function Page() {
   const [theme, setTheme] = useState('light')
@@ -38,6 +47,7 @@ export default function Page() {
       <main>
         <HeroSection />
         <FeaturesSection />
+        <VideoProcess/>
         <PricingSection />
       </main>
 
@@ -251,4 +261,159 @@ function Footer() {
       </div>
     </footer>
   )
+}
+
+
+
+const steps = [
+  {
+    id: 1,
+    title: "Apply for the Program",
+    description: "Submit your video creation request",
+    icon: FileText,
+    duration: "Step 1",
+  },
+  {
+    id: 2,
+    title: "Script Generation",
+    description: "AI generates your video script",
+    icon: MessageSquare,
+    duration: "Step 2",
+  },
+  {
+    id: 3,
+    title: "Voice Generation",
+    description: "Convert script to voiceover",
+    icon: Mic,
+    duration: "Step 3",
+  },
+  {
+    id: 4,
+    title: "Image Generation",
+    description: "Choose visuals for your video",
+    icon: ImageIcon,
+    duration: "Step 4",
+  },
+  {
+    id: 5,
+    title: "Video Assembly",
+    description: "Compile all elements into final video",
+    icon: Video,
+    duration: "Step 5",
+  },
+];
+
+
+ function VideoProcess() {
+  const [currentStep, setCurrentStep] = useState(-1);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const handleStepClick = useCallback((index) => {
+    setCurrentStep(index);
+    if (index === steps.length - 1) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 5000); 
+    }
+  }, []);
+
+  return (
+    <div className="w-full min-h-screen bg-gradient-to-br from-purple-50 to-white dark:from-black dark:to-gray-900 text-gray-900 p-6 relative overflow-hidden">
+      {showConfetti && (
+        <ReactConfetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={200}
+        />
+      )}
+      <div className="max-w-6xl mx-auto space-y-8 mt-12">
+        <div className="space-y-2 text-center">
+          <h1 className="text-3xl font-bold text-white">Video Creation Process</h1>
+          <p className="text-gray-400">Below are the step involved in generating a short video</p>
+        </div>
+        
+        <div className="relative mt-20">
+          {/* Progress Line */}
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-800">
+            <motion.div
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#E94A97] to-[#7B2CD8]"
+              initial={{ width: 0 }}
+              animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+
+          {/* Steps */}
+          <div className="grid grid-cols-5 gap-4">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              const isActive = index <= currentStep;
+              const isCurrent = index === currentStep;
+
+              return (
+                <div key={step.id} className="relative">
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="absolute -top-3 left-[45%] w-6 h-6 bg-gradient-to-r from-[#E94A97] to-[#7B2CD8] rounded-full transform -translate-x-1/2"
+                      />
+                    )}
+                  </AnimatePresence>
+                  <div 
+                    onClick={() => handleStepClick(index)}
+                    className="cursor-pointer group"
+                  >
+                    <div className="relative p-[1px] rounded-lg bg-gradient-to-r from-[#E94A97] to-[#7B2CD8] transition-transform duration-300 group-hover:scale-105">
+                      <Card className="h-[15rem] bg-gray-900 rounded-lg">
+                        <CardContent className="p-4 flex flex-col items-center justify-between h-full">
+                          <div className="text-center flex items-center justify-center flex-col space-y-2  mt-10">
+                            <div className={`p-2 w-12 flex items-center justify-center rounded-full transition-colors duration-300 ${
+                              isActive ? 'bg-gradient-to-r from-[#E94A97] to-[#7B2CD8]' : 'bg-gray-800'
+                            }`}>
+                              <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-400'}`} />
+                            </div>
+                            <h3 className={`font-semibold text-sm transition-colors duration-300 ${
+                              isActive ? 'text-white' : 'text-gray-400'
+                            }`}>
+                              {step.title}
+                            </h3>
+                            <p className="text-xs text-gray-500">{step.description}</p>
+                          </div>
+                          <div className="mt-4">
+                            <span className={`text-xs font-medium transition-colors duration-300 ${
+                              isActive ? 'text-[#E94A97]' : 'text-gray-500'
+                            }`}>
+                              {step.duration}
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Video Generated Message */}
+        <AnimatePresence>
+          {currentStep === steps.length - 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="text-center"
+            >
+              <h2 className="text-2xl font-bold text-white mb-2">Congratulations!</h2>
+              <p className="text-lg text-gray-300">Your video has been generated!</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
 }

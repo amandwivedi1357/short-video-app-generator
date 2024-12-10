@@ -60,7 +60,10 @@ const RemotionVideo = ({script, imageList, audioFileUrl, captions, setDurationIn
                         textAlign:'center',
                         width:'100%'
                     }}>
-                       <h2 className='text-2xl text-black font-bold'>{getCurrentCaption()}</h2> 
+                        <div className='p-2 bg-black'>
+
+                       <h2 className='text-2xl text-white font-bold'>{getCurrentCaption()}</h2> 
+                        </div>
                         </AbsoluteFill>
                     </AbsoluteFill>
                 </Sequence>

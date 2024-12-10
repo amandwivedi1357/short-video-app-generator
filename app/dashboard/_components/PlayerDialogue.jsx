@@ -8,6 +8,7 @@ import {
     DialogTrigger,
   } from "@/components/ui/dialog"
 import {Player} from "@remotion/player"
+// import {renderMedia} from "@remotion/renderer"
 import RemotionVideo from './RemotionVideo'
 import { useAudioData, useVideoConfig } from '@remotion/media-utils'
 
@@ -60,29 +61,38 @@ const PlayerDialogue = ({playVideo, videoId}) => {
 
     const handleExport = useCallback(async () => {
         if (!videoData) return;
-
-        try {
-          // Create a blob URL for the video
-          const videoBlob = await fetch(videoData.videoUrl).then(r => r.blob());
-          const blobUrl = URL.createObjectURL(videoBlob);
-
-          // Create a temporary anchor element
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = `video_${videoId}.mp4`; // You can customize the filename
-
-          // Trigger the download
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-
-          // Clean up the blob URL
-          URL.revokeObjectURL(blobUrl);
-        } catch (error) {
-          console.error('Error downloading video:', error);
-          // You might want to show an error message to the user here
-        }
-      }, [videoData, videoId]);
+    
+        // try {
+        //     const outputLocation = `/public/temp/${videoId}-export.mp4`;  // Save to a public directory
+    
+        //     // Render the video using renderMedia
+        //     const videoBlob = await renderMedia({
+        //         composition: {
+        //             component: RemotionVideo,
+        //             durationInFrames: Number(DurationInFrame.toFixed(0)),
+        //             fps: 30,
+        //             height: 450,
+        //             width: 300,
+        //             defaultProps: {
+        //                 ...videoData
+        //             }
+        //         },
+        //         codec: 'h264',
+        //         outputLocation,
+        //     });
+    
+        //     // Generate a URL for the rendered video blob
+        //     const videoURL = URL.createObjectURL(videoBlob);
+    
+        //     // Save the file to user's computer using FileSaver.js
+        //     saveAs(videoURL, `${videoData.title || 'exported-video'}.mp4`);
+    
+        //     // Optionally close the dialog
+        //     setOpenDialogue(false);
+        // } catch (error) {
+        //     console.error("Error exporting video:", error);
+        // }
+    }, [videoData, videoId, DurationInFrame]);
 
     return (
         <Dialog open={openDialogue} onOpenChange={setOpenDialogue}>
