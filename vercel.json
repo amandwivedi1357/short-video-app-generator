@@ -3,7 +3,7 @@
     "builds": [
       {
         "src": "package.json",
-        "use": "@vercel/node"
+        "use": "@vercel/next"
       }
     ],
     "routes": [
@@ -12,7 +12,7 @@
         "dest": "/"
       }
     ],
-    "buildCommand": "npm run build",
+    "buildCommand": "next build",
     "installCommand": "npm install",
     "framework": "nextjs"
   }
